@@ -9,11 +9,40 @@ class WelcomeScreen extends StatefulWidget {
   _WelcomeScreenState createState() => _WelcomeScreenState();
 }
 
-class _WelcomeScreenState extends State<WelcomeScreen> {
+class _WelcomeScreenState extends State<WelcomeScreen> with SingleTickerProviderStateMixin { //Needed for single animation
+  AnimationController controller;
+  Animation animation;
+
+  @override
+  void initState(){
+    super.initState();
+
+    controller = AnimationController(
+      duration: Duration(seconds: 1),
+      vsync: this, // welcomeScreen state based on mixin (ticker)
+       // cam't have >= 1 if using curves
+    );
+
+    animation = ColorTween(begin: Colors.blueGrey, end: Colors.white).animate(controller);
+
+    controller.forward();
+    controller.addListener((){
+      setState(() {
+        //can keep empty, just need to rebuild for anims
+      });
+      print(controller.value);
+    });
+
+    @override
+    void dispose(){
+      controller.dispose();
+      super.dispose();
+    }
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: animation.value,
       body: Padding(
         padding: EdgeInsets.symmetric(horizontal: 24.0),
         child: Column(
@@ -22,9 +51,12 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
           children: <Widget>[
             Row(
               children: <Widget>[
-                Container(
-                  child: Image.asset('images/logo.png'),
-                  height: 60.0,
+                Hero(
+                  tag: 'logo', // Starting hero widget
+                  child: Container(
+                    child: Image.asset('images/logo.png'),
+                    height: 60, // height does not need to match
+                  ),
                 ),
                 Text(
                   'Flash Chat',
