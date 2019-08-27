@@ -1,6 +1,8 @@
 import 'package:flash_chat/screens/login_screen.dart';
 import 'package:flash_chat/screens/registration_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:animated_text_kit/animated_text_kit.dart';
+import 'package:flash_chat/components/rounded_button.dart';
 
 class WelcomeScreen extends StatefulWidget {
   static const String id = 'welcome_screen'; //saves memory
@@ -9,36 +11,39 @@ class WelcomeScreen extends StatefulWidget {
   _WelcomeScreenState createState() => _WelcomeScreenState();
 }
 
-class _WelcomeScreenState extends State<WelcomeScreen> with SingleTickerProviderStateMixin { //Needed for single animation
+class _WelcomeScreenState extends State<WelcomeScreen>
+    with SingleTickerProviderStateMixin {
+  //Needed for single animation
   AnimationController controller;
   Animation animation;
 
   @override
-  void initState(){
+  void initState() {
     super.initState();
 
     controller = AnimationController(
       duration: Duration(seconds: 1),
       vsync: this, // welcomeScreen state based on mixin (ticker)
-       // cam't have >= 1 if using curves
+      // cam't have >= 1 if using curves
     );
 
-    animation = ColorTween(begin: Colors.blueGrey, end: Colors.white).animate(controller);
+    animation = ColorTween(begin: Colors.blueGrey, end: Colors.white)
+        .animate(controller);
 
     controller.forward();
-    controller.addListener((){
+    controller.addListener(() {
       setState(() {
         //can keep empty, just need to rebuild for anims
       });
-      print(controller.value);
     });
 
     @override
-    void dispose(){
+    void dispose() {
       controller.dispose();
       super.dispose();
     }
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -58,9 +63,9 @@ class _WelcomeScreenState extends State<WelcomeScreen> with SingleTickerProvider
                     height: 60, // height does not need to match
                   ),
                 ),
-                Text(
-                  'Flash Chat',
-                  style: TextStyle(
+                TypewriterAnimatedTextKit(
+                  text: ['Flash Chat'],
+                  textStyle: TextStyle(
                     fontSize: 45.0,
                     fontWeight: FontWeight.w900,
                   ),
@@ -70,44 +75,16 @@ class _WelcomeScreenState extends State<WelcomeScreen> with SingleTickerProvider
             SizedBox(
               height: 48.0,
             ),
-            Padding(
-              padding: EdgeInsets.symmetric(vertical: 16.0),
-              child: Material(
-                elevation: 5.0,
-                color: Colors.lightBlueAccent,
-                borderRadius: BorderRadius.circular(30.0),
-                child: MaterialButton(
-                  onPressed: () {
-                    //Go to login screen.
-                    Navigator.pushNamed(context, LoginScreen.id);
-                  },
-                  minWidth: 200.0,
-                  height: 42.0,
-                  child: Text(
-                    'Log In',
-                  ),
-                ),
-              ),
+            RoundedButton(
+              btnColor: Colors.lightBlue,
+              title: 'Log In',
+              fun: () => Navigator.pushNamed(context, LoginScreen.id),
             ),
-            Padding(
-              padding: EdgeInsets.symmetric(vertical: 16.0),
-              child: Material(
-                color: Colors.blueAccent,
-                borderRadius: BorderRadius.circular(30.0),
-                elevation: 5.0,
-                child: MaterialButton(
-                  onPressed: () {
-                    //Go to registration screen.
-                    Navigator.pushNamed(context, RegistrationScreen.id);
-                  },
-                  minWidth: 200.0,
-                  height: 42.0,
-                  child: Text(
-                    'Register',
-                  ),
-                ),
-              ),
-            ),
+            RoundedButton(
+              btnColor: Colors.blueAccent,
+              title: 'Register',
+              fun: () => Navigator.pushNamed(context, RegistrationScreen.id),
+            )
           ],
         ),
       ),
